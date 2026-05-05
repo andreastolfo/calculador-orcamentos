@@ -3,78 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanças Compartilhadas</title>
+    <title>Finanças em Casal</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Bibliotecas Necessárias -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Tela de Login Simples -->
+    <!-- Tela de Login -->
     <div id="login-screen" class="modal">
         <div class="login-box">
-            <h2>Quem está acessando?</h2>
+            <h2>Gestão Financeira</h2>
+            <p>Selecione quem está acessando:</p>
             <button onclick="fazerLogin('Usuário')">Acessar como Usuário</button>
             <button onclick="fazerLogin('Esposa')">Acessar como Esposa</button>
         </div>
     </div>
 
+    <!-- App Principal -->
     <div id="main-app" style="display:none;">
         <header>
             <div class="user-info">
-                <span>Olá, <strong id="nome-usuario"></strong></span>
+                <span>Bem-vindo(a), <strong id="nome-usuario"></strong></span>
                 <button onclick="logout()" class="btn-link">Sair</button>
             </div>
-            <h1>Dashboard Financeiro 30+</h1>
+            <h1>Fluxo de Caixa Familiar</h1>
         </header>
 
         <div class="summary-cards">
             <div class="card income">
-                <h3>Receitas</h3>
+                <h3>Receitas (Entradas)</h3>
                 <p id="total-receitas">R$ 0,00</p>
             </div>
             <div class="card expenses">
-                <h3>Despesas</h3>
+                <h3>Despesas (Saídas)</h3>
                 <p id="total-despesas">R$ 0,00</p>
             </div>
             <div class="card balance">
-                <h3>Saldo Atual</h3>
+                <h3>Saldo Consolidado</h3>
                 <p id="saldo-geral">R$ 0,00</p>
             </div>
         </div>
 
         <main class="grid-layout">
             <section class="form-container">
-                <h3>Novo Lançamento</h3>
+                <h3>Lançamento Rápido</h3>
                 <div class="form-group">
-                    <input type="text" id="desc" placeholder="Ex: Aluguel, Supermercado...">
+                    <label>Descrição</label>
+                    <input type="text" id="desc" placeholder="Ex: Mercado, Salário, Energia...">
+                    
+                    <label>Tipo</label>
                     <select id="tipo">
                         <option value="despesa">Despesa (Gasto)</option>
                         <option value="receita">Receita (Ganho)</option>
                     </select>
+
+                    <label>Categoria</label>
                     <select id="categoria">
-                        <option value="Moradia">Moradia</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Lazer">Lazer/Viagens</option>
+                        <option value="Moradia">Moradia / Aluguel</option>
+                        <option value="Alimentação">Alimentação / Mercado</option>
+                        <option value="Lazer">Lazer / Viagens</option>
                         <option value="Saúde">Saúde</option>
-                        <option value="Investimentos">Investimentos</option>
+                        <option value="Investimentos">Investimentos / Reserva</option>
+                        <option value="Transporte">Transporte / Combustível</option>
                         <option value="Outros">Outros</option>
                     </select>
-                    <input type="number" id="valor" placeholder="R$ 0,00">
-                    <button onclick="adicionarRegistro()" class="btn-primary">Lançar</button>
+
+                    <label>Valor (R$)</label>
+                    <input type="number" id="valor" step="0.01" placeholder="0.00">
+                    
+                    <button onclick="adicionarRegistro()" class="btn-primary">Registrar no Banco</button>
                 </div>
             </section>
 
-            <div class="charts-and-table">
+            <div class="visual-area">
                 <div class="chart-box">
                     <canvas id="graficoFinancas"></canvas>
                 </div>
                 <div class="table-box">
+                    <h3>Últimos Lançamentos</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Autor</th>
+                                <th>Quem</th>
                                 <th>Item</th>
                                 <th>Valor</th>
-                                <th>Ação</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody id="lista-transacoes"></tbody>
