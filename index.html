@@ -2,36 +2,73 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Calculador de Orçamentos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Custos</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Adicionei um CSS básico direto aqui para o seu primeiro teste ficar bonito */
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
-        input, button { padding: 10px; margin: 5px; }
-        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
-        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    </style>
+    <!-- Importando a biblioteca de gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Orçamento de Projeto</h1>
-        <div class="input-group">
-            <input type="text" id="item" placeholder="Nome do item">
-            <input type="number" id="quantidade" placeholder="Qtd">
-            <input type="number" id="valor" placeholder="Valor (R$)">
-            <button onclick="adicionarItem()">Adicionar</button>
+    <div class="dashboard-container">
+        <header>
+            <h1>Gestão de Orçamentos & Custos</h1>
+            <button onclick="limparDados()" class="btn-clear">Limpar Tudo</button>
+        </header>
+
+        <!-- Cards de Resumo -->
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Total Geral</h3>
+                <p id="total-geral">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Qtd. Itens</h3>
+                <p id="qtd-itens">0</p>
+            </div>
+            <div class="card">
+                <h3>Maior Gasto</h3>
+                <p id="maior-gasto">-</p>
+            </div>
         </div>
-        <table id="tabelaOrçamento">
-            <thead>
-                <tr>
-                    <th>Item</th><th>Qtd</th><th>Unitário</th><th>Total</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <h3>Total Geral: R$ <span id="totalGeral">0.00</span></h3>
+
+        <div class="main-content">
+            <!-- Formulário de Entrada -->
+            <section class="input-section">
+                <h3>Novo Lançamento</h3>
+                <div class="form-grid">
+                    <input type="text" id="item" placeholder="Descrição (ex: Insumos)">
+                    <select id="categoria">
+                        <option value="Materiais">Materiais</option>
+                        <option value="Serviços">Serviços</option>
+                        <option value="Logística">Logística</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                    <input type="number" id="quantidade" placeholder="Qtd">
+                    <input type="number" id="valor" placeholder="Valor Unit.">
+                    <button onclick="adicionarItem()" class="btn-add">Adicionar</button>
+                </div>
+            </section>
+
+            <!-- Gráfico e Tabela -->
+            <div class="visual-section">
+                <div class="chart-container">
+                    <canvas id="meuGrafico"></canvas>
+                </div>
+                <div class="table-container">
+                    <table id="tabela-itens">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Categoria</th>
+                                <th>Total</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
