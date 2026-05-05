@@ -1,37 +1,38 @@
 :root {
-    --bg: #f0f2f5;
-    --primary: #1a73e8;
-    --income: #27ae60;
-    --expense: #e74c3c;
-    --dark: #202124;
+    --bg: #f4f7f6;
+    --primary: #2563eb;
+    --income: #10b981;
+    --expense: #ef4444;
+    --dark: #1e293b;
+    --white: #ffffff;
 }
 
-body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--dark); }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--dark); }
 
-/* Login Modal */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; }
-.login-box button { display: block; width: 100%; margin: 10px 0; padding: 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; transition: 0.2s; }
+.login-box { background: var(--white); padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+.login-box button { display: block; width: 100%; margin: 12px 0; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; background: #e2e8f0; transition: 0.3s; }
 .login-box button:hover { background: var(--primary); color: white; }
 
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
 
-.summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-.card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.card h3 { margin: 0; font-size: 14px; color: #5f6368; }
-.card p { font-size: 24px; font-weight: bold; margin: 10px 0 0 0; }
+.summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.card { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.card h3 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; }
+.card p { font-size: 28px; font-weight: 800; margin: 10px 0 0 0; }
 .income p { color: var(--income); }
 .expenses p { color: var(--expense); }
 
-.grid-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
-.form-container { background: white; padding: 20px; border-radius: 10px; height: fit-content; }
-.form-group input, .form-group select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-.btn-primary { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+.grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 25px; }
+.form-container { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; }
+.form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #64748b; }
+.form-group input, .form-group select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
+.btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-.charts-and-table { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.chart-box, .table-box { background: white; padding: 20px; border-radius: 10px; }
+.visual-area { display: grid; grid-template-rows: auto 1fr; gap: 25px; }
+.chart-box, .table-box { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
 table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-size: 12px; color: #5f6368; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-td { padding: 10px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
-.btn-del { color: var(--expense); background: none; border: none; cursor: pointer; }
+th { text-align: left; font-size: 12px; color: #94a3b8; padding: 10px; border-bottom: 2px solid #f1f5f9; }
+td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+.btn-del { color: var(--expense); background: none; border: none; cursor: pointer; font-size: 12px; }
