@@ -1,6 +1,6 @@
 // CONFIGURAÇÃO SUPABASE - Pegue no painel Settings > API
-const SB_URL = 'SUA_URL_AQUI';
-const SB_KEY = 'SUA_ANON_KEY_AQUI';
+const SB_URL = 'https://ibjsxbjkrdbhlpxxampp.supabase.co/rest/v1/';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlianN4YmprcmRiaGxweHhhbXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMTA1MTEsImV4cCI6MjA5MzU4NjUxMX0.otIaM4qqyIN7vtvwYWHNvn_Ddueju7rELhzKnmIyBYE';
 const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
 let usuarioAtual = "";
