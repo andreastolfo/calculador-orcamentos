@@ -1,74 +1,102 @@
-let usuarioAtual = "";
-let registros = JSON.parse(localStorage.getItem('financas_casal')) || [];
-let grafico;
+// CONFIGURAÇÃO SUPABASE - Pegue no painel Settings > API
+const SB_URL = 'SUA_URL_AQUI';
+const SB_KEY = 'SUA_ANON_KEY_AQUI';
+const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
+let usuarioAtual = "";
+let registros = [];
+let graficoInstancia;
+
+// 1. Função de Login
 function fazerLogin(nome) {
     usuarioAtual = nome;
     document.getElementById('nome-usuario').innerText = nome;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-app').style.display = 'block';
-    atualizarTudo();
+    carregarDados();
 }
 
-function logout() {
-    location.reload();
+function logout() { location.reload(); }
+
+// 2. Carregar Dados do Supabase
+async function carregarDados() {
+    const { data, error } = await supabaseClient
+        .from('transacoes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Erro ao carregar:", error);
+    } else {
+        registros = data;
+        atualizarInterface();
+    }
 }
 
-function adicionarRegistro() {
+// 3. Adicionar Novo Registro ao Banco
+async function adicionarRegistro() {
     const desc = document.getElementById('desc').value;
     const tipo = document.getElementById('tipo').value;
     const cat = document.getElementById('categoria').value;
     const val = parseFloat(document.getElementById('valor').value);
 
-    if (!desc || isNaN(val)) return alert("Preencha os valores!");
+    if (!desc || isNaN(val)) return alert("Preencha todos os campos corretamente.");
 
-    const novo = {
-        id: Date.now(),
-        autor: usuarioAtual,
-        desc,
-        tipo,
-        cat,
-        valor: val
-    };
+    const { error } = await supabaseClient
+        .from('transacoes')
+        .insert([{ 
+            autor: usuarioAtual, 
+            desc: desc, 
+            tipo: tipo, 
+            categoria: cat, 
+            valor: val 
+        }]);
 
-    registros.push(novo);
-    salvar();
-    document.getElementById('desc').value = '';
-    document.getElementById('valor').value = '';
+    if (error) {
+        alert("Erro ao salvar no banco!");
+    } else {
+        // Limpar campos e recarregar (o realtime também ajuda aqui)
+        document.getElementById('desc').value = '';
+        document.getElementById('valor').value = '';
+        carregarDados();
+    }
 }
 
-function salvar() {
-    localStorage.setItem('financas_casal', JSON.stringify(registros));
-    atualizarTudo();
+// 4. Excluir Registro
+async function excluir(id) {
+    if (confirm("Deseja apagar este lançamento?")) {
+        const { error } = await supabaseClient
+            .from('transacoes')
+            .delete()
+            .eq('id', id);
+        
+        if (!error) carregarDados();
+    }
 }
 
-function excluir(id) {
-    registros = registros.filter(r => r.id !== id);
-    salvar();
-}
-
-function atualizarTudo() {
+// 5. Atualizar toda a UI (Cards, Tabela e Gráfico)
+function atualizarInterface() {
     const tbody = document.getElementById('lista-transacoes');
     tbody.innerHTML = '';
     
     let totalR = 0;
     let totalD = 0;
-    let dadosGrafico = { Moradia: 0, Alimentação: 0, Lazer: 0, Saúde: 0, Investimentos: 0, Outros: 0 };
+    let dadosPorCat = {};
 
     registros.forEach(r => {
         if (r.tipo === 'receita') {
             totalR += r.valor;
         } else {
             totalD += r.valor;
-            dadosGrafico[r.cat] += r.valor;
+            dadosPorCat[r.categoria] = (dadosPorCat[r.categoria] || 0) + r.valor;
         }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><strong>${r.autor}</strong></td>
             <td>${r.desc}</td>
-            <td style="color: ${r.tipo === 'receita' ? '#27ae60' : '#e74c3c'}">
-                ${r.tipo === 'receita' ? '+' : '-'} R$ ${r.valor.toFixed(2)}
+            <td style="color: ${r.tipo === 'receita' ? '#10b981' : '#ef4444'}">
+                R$ ${r.valor.toFixed(2)}
             </td>
             <td><button onclick="excluir(${r.id})" class="btn-del">Remover</button></td>
         `;
@@ -79,23 +107,34 @@ function atualizarTudo() {
     document.getElementById('total-despesas').innerText = `R$ ${totalD.toFixed(2)}`;
     document.getElementById('saldo-geral').innerText = `R$ ${(totalR - totalD).toFixed(2)}`;
 
-    renderizarGrafico(dadosGrafico);
+    renderizarGrafico(dadosPorCat);
 }
 
+// 6. Gerar Gráfico de Despesas
 function renderizarGrafico(dados) {
     const ctx = document.getElementById('graficoFinancas').getContext('2d');
-    if (grafico) grafico.destroy();
+    if (graficoInstancia) graficoInstancia.destroy();
 
-    grafico = new Chart(ctx, {
-        type: 'bar',
+    graficoInstancia = new Chart(ctx, {
+        type: 'doughnut',
         data: {
             labels: Object.keys(dados),
             datasets: [{
-                label: 'Gastos por Categoria',
                 data: Object.values(dados),
-                backgroundColor: '#1a73e8'
+                backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#64748b']
             }]
         },
-        options: { responsive: true }
+        options: { 
+            responsive: true,
+            plugins: { title: { display: true, text: 'Distribuição de Despesas' } }
+        }
     });
 }
+
+// 7. Sincronização Realtime (Opcional, mas incrível)
+supabaseClient
+  .channel('public:transacoes')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'transacoes' }, () => {
+    carregarDados();
+  })
+  .subscribe();
