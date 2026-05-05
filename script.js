@@ -7,7 +7,9 @@ let usuarioAtual = "";
 let registros = [];
 let graficoInstancia;
 
-// 1. Função de Login
+// ==========================================
+// 1. AUTENTICAÇÃO SIMPLES E NAVEGAÇÃO
+// ==========================================
 function fazerLogin(nome) {
     usuarioAtual = nome;
     document.getElementById('nome-usuario').innerText = nome;
@@ -16,9 +18,15 @@ function fazerLogin(nome) {
     carregarDados();
 }
 
-function logout() { location.reload(); }
+function logout() { 
+    location.reload(); 
+}
 
-// 2. Carregar Dados do Supabase
+// ==========================================
+// 2. COMUNICAÇÃO COM O BANCO DE DADOS (SUPABASE)
+// ==========================================
+
+// A. Buscar Dados (Ler)
 async function carregarDados() {
     const { data, error } = await supabaseClient
         .from('transacoes')
@@ -26,21 +34,25 @@ async function carregarDados() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.error("Erro ao carregar:", error);
+        console.error("Erro ao carregar do banco:", error);
+        alert("Erro ao carregar dados: " + error.message);
     } else {
         registros = data;
         atualizarInterface();
     }
 }
 
-// 3. Adicionar Novo Registro ao Banco
+// B. Lançar Novo Registro (Criar)
 async function adicionarRegistro() {
     const desc = document.getElementById('desc').value;
     const tipo = document.getElementById('tipo').value;
     const cat = document.getElementById('categoria').value;
     const val = parseFloat(document.getElementById('valor').value);
 
-    if (!desc || isNaN(val)) return alert("Preencha todos os campos corretamente.");
+    if (!desc || isNaN(val)) {
+        alert("Por favor, preencha a Descrição e o Valor corretamente.");
+        return;
+    }
 
     const { error } = await supabaseClient
         .from('transacoes')
@@ -49,71 +61,120 @@ async function adicionarRegistro() {
             desc: desc, 
             tipo: tipo, 
             categoria: cat, 
-            valor: val 
+            valor: val,
+            pago: false // Todo novo lançamento nasce como pendente
         }]);
 
     if (error) {
-        alert("Erro ao salvar no banco!");
+        console.error("Erro ao salvar:", error);
+        alert("Erro ao salvar no banco: " + error.message);
     } else {
-        // Limpar campos e recarregar (o realtime também ajuda aqui)
+        // Limpa os campos da tela após o sucesso
         document.getElementById('desc').value = '';
         document.getElementById('valor').value = '';
         carregarDados();
     }
 }
 
-// 4. Excluir Registro
+// C. Excluir Registro (Deletar)
 async function excluir(id) {
-    if (confirm("Deseja apagar este lançamento?")) {
+    if (confirm("Tem certeza que deseja apagar este lançamento?")) {
         const { error } = await supabaseClient
             .from('transacoes')
             .delete()
             .eq('id', id);
         
-        if (!error) carregarDados();
+        if (error) {
+            alert("Erro ao excluir: " + error.message);
+        } else {
+            carregarDados();
+        }
     }
 }
 
-// 5. Atualizar toda a UI (Cards, Tabela e Gráfico)
+// D. Atualizar Status Pago/Pendente (Atualizar)
+async function alternarStatus(id, statusAtual) {
+    const novoStatus = !statusAtual; // Se for true vira false, se for false vira true
+
+    const { error } = await supabaseClient
+        .from('transacoes')
+        .update({ pago: novoStatus })
+        .eq('id', id);
+
+    if (error) {
+        alert("Erro ao mudar o status: " + error.message);
+    } else {
+        carregarDados();
+    }
+}
+
+// ==========================================
+// 3. ATUALIZAÇÃO DA INTERFACE (TELA E GRÁFICO)
+// ==========================================
+
 function atualizarInterface() {
     const tbody = document.getElementById('lista-transacoes');
     tbody.innerHTML = '';
     
-    let totalR = 0;
-    let totalD = 0;
-    let dadosPorCat = {};
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    let dadosPorCategoria = {};
 
     registros.forEach(r => {
+        // 1. Acumuladores Financeiros
         if (r.tipo === 'receita') {
-            totalR += r.valor;
+            totalReceitas += r.valor;
         } else {
-            totalD += r.valor;
-            dadosPorCat[r.categoria] = (dadosPorCat[r.categoria] || 0) + r.valor;
+            totalDespesas += r.valor;
+            // Soma gastos por categoria para o gráfico
+            dadosPorCategoria[r.categoria] = (dadosPorCategoria[r.categoria] || 0) + r.valor;
         }
 
+        // 2. Construção da Tabela
         const tr = document.createElement('tr');
+        
+        // Define as cores e textos baseados no status (Pago/Pendente)
+        const corStatus = r.pago ? '#10b981' : '#f59e0b'; // Verde ou Laranja
+        const textoStatus = r.pago ? 'Pago' : 'Pendente';
+        const estiloDescricao = r.pago ? 'text-decoration: line-through; color: #94a3b8;' : 'font-weight: 500;';
+        
         tr.innerHTML = `
             <td><strong>${r.autor}</strong></td>
-            <td>${r.desc}</td>
-            <td style="color: ${r.tipo === 'receita' ? '#10b981' : '#ef4444'}">
+            <td>
+                <button onclick="alternarStatus(${r.id}, ${r.pago})" 
+                        style="background: ${corStatus}; color: white; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; width: 75px;">
+                    ${textoStatus}
+                </button>
+            </td>
+            <td style="${estiloDescricao}">${r.desc}</td>
+            <td style="color: ${r.tipo === 'receita' ? '#10b981' : '#ef4444'}; font-weight: bold;">
                 R$ ${r.valor.toFixed(2)}
             </td>
-            <td><button onclick="excluir(${r.id})" class="btn-del">Remover</button></td>
+            <td>
+                <button onclick="excluir(${r.id})" style="color: #ef4444; background: transparent; border: 1px solid #ef4444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">
+                    Excluir
+                </button>
+            </td>
         `;
         tbody.appendChild(tr);
     });
 
-    document.getElementById('total-receitas').innerText = `R$ ${totalR.toFixed(2)}`;
-    document.getElementById('total-despesas').innerText = `R$ ${totalD.toFixed(2)}`;
-    document.getElementById('saldo-geral').innerText = `R$ ${(totalR - totalD).toFixed(2)}`;
+    // 3. Atualizar os Cards de Resumo no topo
+    document.getElementById('total-receitas').innerText = `R$ ${totalReceitas.toFixed(2)}`;
+    document.getElementById('total-despesas').innerText = `R$ ${totalDespesas.toFixed(2)}`;
+    document.getElementById('saldo-geral').innerText = `R$ ${(totalReceitas - totalDespesas).toFixed(2)}`;
 
-    renderizarGrafico(dadosPorCat);
+    // 4. Desenhar o Gráfico
+    renderizarGrafico(dadosPorCategoria);
 }
 
-// 6. Gerar Gráfico de Despesas
 function renderizarGrafico(dados) {
     const ctx = document.getElementById('graficoFinancas').getContext('2d');
-    if (graficoInstancia) graficoInstancia.destroy();
+    
+    // Destrói o gráfico antigo antes de criar um novo para não bugar a tela
+    if (graficoInstancia) {
+        graficoInstancia.destroy();
+    }
 
     graficoInstancia = new Chart(ctx, {
         type: 'doughnut',
@@ -121,17 +182,26 @@ function renderizarGrafico(dados) {
             labels: Object.keys(dados),
             datasets: [{
                 data: Object.values(dados),
-                backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#64748b']
+                backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#64748b'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
             }]
         },
         options: { 
             responsive: true,
-            plugins: { title: { display: true, text: 'Distribuição de Despesas' } }
+            maintainAspectRatio: false,
+            plugins: { 
+                title: { display: true, text: 'Onde o dinheiro está indo (Despesas)', font: { size: 14 } },
+                legend: { position: 'bottom' }
+            }
         }
     });
 }
 
-// 7. Sincronização Realtime (Opcional, mas incrível)
+// ==========================================
+// 4. ATUALIZAÇÃO EM TEMPO REAL (REALTIME)
+// ==========================================
+// Se sua esposa lançar algo no celular, a sua tela atualiza na hora
 supabaseClient
   .channel('public:transacoes')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'transacoes' }, () => {
