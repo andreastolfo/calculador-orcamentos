@@ -12,15 +12,11 @@
     <div id="login-screen" class="modal">
         <div class="login-box">
             <h2>💰 Cofre da Família</h2>
-            
             <div id="step-password">
-                <p>Digite a senha de acesso:</p>
                 <input type="password" id="senha-master" placeholder="Senha">
                 <button onclick="verificarSenha()">Entrar</button>
             </div>
-
             <div id="step-profiles" style="display:none;">
-                <p>Quem está acessando agora?</p>
                 <button onclick="fazerLogin('André')" class="btn-user">André</button>
                 <button onclick="fazerLogin('Ângela')" class="btn-user">Ângela</button>
             </div>
@@ -37,81 +33,69 @@
         </header>
 
         <div class="summary-cards">
-            <div class="card income">
-                <h3>Receitas</h3>
-                <p id="total-receitas">R$ 0,00</p>
-            </div>
-            <div class="card expenses">
-                <h3>Despesas</h3>
-                <p id="total-despesas">R$ 0,00</p>
-            </div>
-            <div class="card balance">
-                <h3>Saldo Consolidado</h3>
-                <p id="saldo-geral">R$ 0,00</p>
-            </div>
+            <div class="card income"><h3>Receitas</h3><p id="total-receitas">R$ 0,00</p></div>
+            <div class="card expenses"><h3>Despesas</h3><p id="total-despesas">R$ 0,00</p></div>
+            <div class="card balance"><h3>Saldo</h3><p id="saldo-geral">R$ 0,00</p></div>
         </div>
 
         <main class="grid-layout">
             <section class="form-container">
                 <h3>Novo Lançamento</h3>
                 <div class="form-group">
-                    <label>Descrição</label>
-                    <input type="text" id="desc" placeholder="Ex: Mercado, Salário...">
-                    
-                    <label>Tipo</label>
+                    <input type="text" id="desc" placeholder="Descrição">
                     <select id="tipo">
-                        <option value="despesa">Despesa (Gasto)</option>
-                        <option value="receita">Receita (Ganho)</option>
+                        <option value="despesa">Despesa</option>
+                        <option value="receita">Receita</option>
                     </select>
-
-                    <label>Categoria</label>
                     <select id="categoria">
-                        <option value="Moradia">Moradia</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Lazer">Lazer</option>
-                        <option value="Saúde">Saúde</option>
-                        <option value="Investimentos">Investimentos</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Outros">Outros</option>    
+                        <option value="Mercado">🛒 Mercado</option>
+                        <option value="Moradia">🏠 Moradia</option>
+                        <option value="Lazer">🥂 Lazer</option>
+                        <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+                        <option value="Transporte">🚗 Transporte</option>
+                        <option value="Saúde">💊 Saúde</option>
+                        <option value="Investimentos">💰 Investimentos</option>
+                        <option value="Outros">⚙️ Outros</option>
                     </select>
+                    <input type="number" id="valor" step="0.01" placeholder="R$ 0,00">
+                    <button onclick="adicionarRegistro()" class="btn-primary">Lançar</button>
+                </div>
 
-                    <label>Valor (R$)</label>
-                    <input type="number" id="valor" step="0.01" placeholder="0.00">
-                    
-                    <button onclick="adicionarRegistro()" class="btn-primary">Registrar no Banco</button>
+                <hr style="margin:25px 0; border:0; border-top:1px solid #eee;">
+                
+                <h3>Definir Meta</h3>
+                <div class="form-group">
+                    <select id="meta-categoria">
+                        <option value="Mercado">Mercado</option>
+                        <option value="Lazer">Lazer</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Transporte">Transporte</option>
+                    </select>
+                    <input type="number" id="meta-valor" placeholder="Limite R$">
+                    <button onclick="definirMeta()" class="btn-primary" style="background:#1e293b;">Salvar Meta</button>
                 </div>
             </section>
 
             <div class="visual-area">
                 <div class="filters-container">
                     <select id="filtroAutor" onchange="atualizarInterface()">
-                        <option value="Todos">Todos os Autores</option>
+                        <option value="Todos">Todos</option>
                         <option value="André">André</option>
                         <option value="Ângela">Ângela</option>
                     </select>
-
                     <select id="filtroMes" onchange="atualizarInterface()">
                         <option value="Atual">Mês Atual</option>
-                        <option value="Todos">Todo o Histórico</option>
+                        <option value="Todos">Histórico</option>
                     </select>
                 </div>
 
-                <div class="chart-box">
-                    <canvas id="graficoFinancas"></canvas>
-                </div>
+                <div id="container-metas" class="metas-box"></div>
+
+                <div class="chart-box"><canvas id="graficoFinancas"></canvas></div>
 
                 <div class="table-box">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Quem</th>
-                                <th>Status</th>
-                                <th>Item</th>
-                                <th>Valor</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Quem</th><th>Status</th><th>Item</th><th>Valor</th><th></th></tr></thead>
                         <tbody id="lista-transacoes"></tbody>
                     </table>
                 </div>
