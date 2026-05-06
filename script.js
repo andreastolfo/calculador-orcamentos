@@ -7,21 +7,19 @@ let usuarioAtual = "";
 let registros = [];
 let graficoInstancia;
 
-// CONFIGURAÇÃO DE SEGURANÇA
-const SENHA_CORRETA = "1234"; // VOCÊ PODE MUDAR SUA SENHA AQUI
+const SENHA_CORRETA = "1234"; // Altere sua senha aqui se desejar
 
-// 1. Verificação de Senha
+// 1. LOGIN E SEGURANÇA
 function verificarSenha() {
     const senhaDigitada = document.getElementById('senha-master').value;
     if (senhaDigitada === SENHA_CORRETA) {
         document.getElementById('step-password').style.display = 'none';
         document.getElementById('step-profiles').style.display = 'block';
     } else {
-        alert("Senha incorreta! Tente novamente.");
+        alert("Senha incorreta!");
     }
 }
 
-// 2. Escolha de Perfil
 function fazerLogin(nome) {
     usuarioAtual = nome;
     document.getElementById('nome-usuario').innerText = nome;
@@ -32,10 +30,13 @@ function fazerLogin(nome) {
 
 function logout() { location.reload(); }
 
-// 3. Funções do Banco (Carregar, Adicionar, Excluir, Status)
+// 2. BANCO DE DADOS
 async function carregarDados() {
     const { data, error } = await supabaseClient.from('transacoes').select('*').order('created_at', { ascending: false });
-    if (!error) { registros = data; atualizarInterface(); }
+    if (!error) { 
+        registros = data; 
+        atualizarInterface(); 
+    }
 }
 
 async function adicionarRegistro() {
@@ -44,7 +45,7 @@ async function adicionarRegistro() {
     const cat = document.getElementById('categoria').value;
     const val = parseFloat(document.getElementById('valor').value);
 
-    if (!desc || isNaN(val)) return alert("Preencha descrição e valor!");
+    if (!desc || isNaN(val)) return alert("Preencha os campos corretamente!");
 
     const { error } = await supabaseClient.from('transacoes').insert([{ 
         autor: usuarioAtual, desc, tipo, categoria: cat, valor: val, pago: false 
@@ -58,24 +59,36 @@ async function adicionarRegistro() {
 }
 
 async function alternarStatus(id, statusAtual) {
-    const { error } = await supabaseClient.from('transacoes').update({ pago: !statusAtual }).eq('id', id);
-    if (!error) carregarDados();
+    await supabaseClient.from('transacoes').update({ pago: !statusAtual }).eq('id', id);
+    carregarDados();
 }
 
 async function excluir(id) {
-    if (confirm("Excluir lançamento?")) {
-        const { error } = await supabaseClient.from('transacoes').delete().eq('id', id);
-        if (!error) carregarDados();
+    if (confirm("Excluir este lançamento?")) {
+        await supabaseClient.from('transacoes').delete().eq('id', id);
+        carregarDados();
     }
 }
 
-// 4. Interface e Gráfico
+// 3. INTERFACE E FILTROS
 function atualizarInterface() {
     const tbody = document.getElementById('lista-transacoes');
     tbody.innerHTML = '';
     let totalR = 0; let totalD = 0; let dadosCat = {};
 
-    registros.forEach(r => {
+    const filtroAutor = document.getElementById('filtroAutor').value;
+    const filtroMes = document.getElementById('filtroMes').value;
+    const hoje = new Date();
+
+    const registrosExibidos = registros.filter(r => {
+        const dataReg = new Date(r.created_at);
+        const bateAutor = (filtroAutor === "Todos") || (r.autor === filtroAutor);
+        const bateMes = (filtroMes === "Todos") || 
+                        (dataReg.getMonth() === hoje.getMonth() && dataReg.getFullYear() === hoje.getFullYear());
+        return bateAutor && bateMes;
+    });
+
+    registrosExibidos.forEach(r => {
         if (r.tipo === 'receita') totalR += r.valor;
         else { 
             totalD += r.valor; 
@@ -89,13 +102,13 @@ function atualizarInterface() {
         tr.innerHTML = `
             <td><strong>${r.autor}</strong></td>
             <td>
-                <button onclick="alternarStatus(${r.id}, ${r.pago})" style="background:${corStatus}; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">
+                <button onclick="alternarStatus(${r.id}, ${r.pago})" style="background:${corStatus}; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold; width:75px;">
                     ${textoStatus}
                 </button>
             </td>
-            <td style="${r.pago ? 'text-decoration:line-through; color:gray;' : ''}">${r.desc}</td>
-            <td style="color:${r.tipo==='receita'?'#10b981':'#ef4444'}">R$ ${r.valor.toFixed(2)}</td>
-            <td><button onclick="excluir(${r.id})" class="btn-del">Remover</button></td>
+            <td style="${r.pago ? 'text-decoration:line-through; color:gray;' : 'font-weight:500;'}">${r.desc}</td>
+            <td style="color:${r.tipo==='receita'?'#10b981':'#ef4444'}; font-weight:bold;">R$ ${r.valor.toFixed(2)}</td>
+            <td><button onclick="excluir(${r.id})" class="btn-del">Excluir</button></td>
         `;
         tbody.appendChild(tr);
     });
@@ -115,7 +128,7 @@ function renderizarGrafico(dados) {
             labels: Object.keys(dados),
             datasets: [{ data: Object.values(dados), backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'] }]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }
 
