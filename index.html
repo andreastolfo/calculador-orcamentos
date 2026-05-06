@@ -53,7 +53,7 @@
 
         <main class="grid-layout">
             <section class="form-container">
-                <h3>Lançamento Rápido</h3>
+                <h3>Novo Lançamento</h3>
                 <div class="form-group">
                     <label>Descrição</label>
                     <input type="text" id="desc" placeholder="Ex: Mercado, Salário...">
@@ -78,23 +78,37 @@
                     <label>Valor (R$)</label>
                     <input type="number" id="valor" step="0.01" placeholder="0.00">
                     
-                    <button onclick="adicionarRegistro()" class="btn-primary">Lançar</button>
+                    <button onclick="adicionarRegistro()" class="btn-primary">Registrar no Banco</button>
                 </div>
             </section>
 
             <div class="visual-area">
+                <div class="filters-container">
+                    <select id="filtroAutor" onchange="atualizarInterface()">
+                        <option value="Todos">Todos os Autores</option>
+                        <option value="André">André</option>
+                        <option value="Ângela">Ângela</option>
+                    </select>
+
+                    <select id="filtroMes" onchange="atualizarInterface()">
+                        <option value="Atual">Mês Atual</option>
+                        <option value="Todos">Todo o Histórico</option>
+                    </select>
+                </div>
+
                 <div class="chart-box">
                     <canvas id="graficoFinancas"></canvas>
                 </div>
+
                 <div class="table-box">
                     <table>
                         <thead>
                             <tr>
-                                <th>Autor</th>
+                                <th>Quem</th>
                                 <th>Status</th>
                                 <th>Item</th>
                                 <th>Valor</th>
-                                <th>Ação</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="lista-transacoes"></tbody>
