@@ -8,7 +8,7 @@ let registros = [];
 let graficoInstancia;
 
 const SENHA_CORRETA = "1234"; // Altere sua senha aqui se desejar
-
+    
 // 1. LOGIN E SEGURANÇA
 function verificarSenha() {
     const senhaDigitada = document.getElementById('senha-master').value;
@@ -122,13 +122,26 @@ function atualizarInterface() {
 function renderizarGrafico(dados) {
     const ctx = document.getElementById('graficoFinancas').getContext('2d');
     if (graficoInstancia) graficoInstancia.destroy();
+    
     graficoInstancia = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: Object.keys(dados),
-            datasets: [{ data: Object.values(dados), backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'] }]
+            datasets: [{ 
+                data: Object.values(dados), 
+                // Adicionei mais cores abaixo para suportar o Cartão de Crédito e outros
+                backgroundColor: [
+                    '#2563eb', '#10b981', '#f59e0b', '#ef4444', 
+                    '#8b5cf6', '#06b6d4', '#f43f5e', '#d946ef', 
+                    '#ff7f50', '#20b2aa'
+                ] 
+            }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { legend: { position: 'bottom' } } 
+        }
     });
 }
 
