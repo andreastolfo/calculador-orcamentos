@@ -47,10 +47,21 @@ async function adicionarRegistro() {
 async function definirMeta() {
     const cat = document.getElementById('meta-categoria').value;
     const val = parseFloat(document.getElementById('meta-valor').value);
-    if (isNaN(val)) return alert("Valor inválido");
-    await supabaseClient.from('metas').upsert({ categoria: cat, valor_limite: val }, { onConflict: 'categoria' });
-    alert("Meta salva!");
-    carregarDados();
+
+    if (isNaN(val)) return alert("Por favor, digite um valor numérico para a meta.");
+
+    const { error } = await supabaseClient
+        .from('metas')
+        .upsert({ categoria: cat, valor_limite: val }, { onConflict: 'categoria' });
+
+    if (!error) {
+        alert("Meta salva com sucesso!");
+        // --- ESTA É A LINHA QUE LIMPA O CAMPO ---
+        document.getElementById('meta-valor').value = ''; 
+        carregarDados();
+    } else {
+        alert("Erro ao salvar meta: " + error.message);
+    }
 }
 
 async function alternarStatus(id, status) {
