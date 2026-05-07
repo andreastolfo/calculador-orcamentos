@@ -140,3 +140,21 @@ input, select {
 table { width: 100%; border-collapse: collapse; }
 th { text-align: left; padding: 15px; font-size: 12px; color: var(--text-muted); border-bottom: 2px solid #f1f5f9; }
 td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+
+.btn-primary {
+    width: 100% !important; /* Força o botão a ser grande */
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Garante que os rótulos não dupliquem visualmente */
+label {
+    display: block;
+    margin-top: 10px;
+}
