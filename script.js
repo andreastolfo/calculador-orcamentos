@@ -168,10 +168,9 @@ function atualizarInterface() {
         let statusHTML = "";
         if (r.categoria === 'Cartão de Crédito') {
             // Botão interativo para o Cartão
-            statusHTML = `<button onclick="alternarStatus(${r.id}, ${r.pago})" style="background:${r.pago?'#10b981':'#f59e0b'}; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; min-width:85px; font-size:11px;">${r.pago?'Pago':'Pendente'}</button>`;
+            statusHTML = `<button onclick="alternarStatus(${r.id}, ${r.pago})" class="badge ${r.pago ? 'bg-pago' : 'bg-pendente'}" style="cursor:pointer; border:none;">${r.pago ? 'Pago' : 'Pendente'}</button>`;
         } else {
-            // Etiqueta padronizada para o que é À Vista (Debito/Pix)
-            statusHTML = `<span style="background:#64748b; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; display:inline-block; min-width:85px; text-align:center; font-size:11px;">À Vista</span>`;
+            statusHTML = `<span class="badge bg-vista">À Vista</span>`;
         }
 
         tbody.innerHTML += `<tr>
