@@ -100,7 +100,10 @@ function atualizarInterface() {
             <td><button onclick="alternarStatus(${r.id}, ${r.pago})" style="background:${r.pago?'#10b981':'#f59e0b'}; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">${r.pago?'Pago':'Pendente'}</button></td>
             <td style="${r.pago?'text-decoration:line-through; color:gray;':''}">${r.desc}</td>
             <td style="color:${r.tipo==='receita'?'#10b981':'#ef4444'}">R$ ${r.valor.toFixed(2)}</td>
-            <td><button onclick="excluir(${r.id})" class="btn-del" style="color:red; background:none; border:none; cursor:pointer;">Excluir</button></td>
+            <td>
+                <button onclick="prepararEdicao(${r.id})" class="btn-edit" style="color:blue; background:none; border:none; cursor:pointer; margin-right:8px;">✏️</button>
+                <button onclick="excluir(${r.id})" class="btn-del" style="color:red; background:none; border:none; cursor:pointer;">X</button>
+            </td>
         </tr>`;
     });
 
