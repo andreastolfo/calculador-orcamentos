@@ -149,7 +149,6 @@ function atualizarInterface() {
     const hoje = new Date();
 
     const filtrados = registros.filter(r => {
-        // Filtra pela coluna DATA (usando timezone local para não errar o mês)
         const dReg = new Date(r.data + 'T00:00:00'); 
         const bA = (fAutor === "Todos") || (r.autor === fAutor);
         const bM = (fMes === "Todos") || (dReg.getMonth() === hoje.getMonth() && dReg.getFullYear() === hoje.getFullYear());
@@ -163,23 +162,24 @@ function atualizarInterface() {
             dadosCat[r.categoria] = (dadosCat[r.categoria] || 0) + r.valor; 
         }
         
-        const dataFormatada = r.data.split('-').reverse().slice(0,2).join('/');
-        
+        const dataBR = r.data ? r.data.split('-').reverse().slice(0, 2).join('/') : '--/--';
+
         let statusHTML = "";
         if (r.categoria === 'Cartão de Crédito') {
-            statusHTML = `<button onclick="alternarStatus(${r.id}, ${r.pago})" style="background:${r.pago?'#10b981':'#f59e0b'}; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; min-width:85px; font-size:11px;">${r.pago?'Pago':'Pendente'}</button>`;
+            statusHTML = `<button onclick="alternarStatus(${r.id}, ${r.pago})" class="badge ${r.pago ? 'bg-pago' : 'bg-pendente'}" style="cursor:pointer; border:none;">${r.pago ? 'Pago' : 'Pendente'}</button>`;
         } else {
-            statusHTML = `<span style="background:#64748b; color:white; padding:4px 8px; border-radius:4px; font-weight:bold; display:inline-block; min-width:85px; text-align:center; font-size:11px;">À Vista</span>`;
+            statusHTML = `<span class="badge bg-vista">À Vista</span>`;
         }
 
+        // ORDEM CORRETA DAS COLUNAS: Data | Quem | Status | Item | Valor | Ações
         tbody.innerHTML += `<tr>
-            <td style="font-size:11px; color:#64748b;">${dataFormatada}</td>
+            <td style="font-size:11px; color:#64748b;">${dataBR}</td>
             <td><strong>${r.autor}</strong></td>
             <td>${statusHTML}</td>
-            <td style="${(r.pago && r.categoria === 'Cartão de Crédito') ? 'text-decoration:line-through; color:gray;' : ''}">${r.desc}</td>
+            <td>${r.desc}</td>
             <td style="color:${r.tipo==='receita'?'#10b981':'#ef4444'}; font-weight:bold;">R$ ${r.valor.toFixed(2)}</td>
             <td>
-                <button onclick="prepararEdicao(${r.id})" style="background:none; border:none; cursor:pointer; margin-right:8px;">✏️</button>
+                <button onclick="prepararEdicao(${r.id})" style="background:none; border:none; cursor:pointer; margin-right:10px;">✏️</button>
                 <button onclick="excluir(${r.id})" style="background:none; border:none; cursor:pointer; color:#cbd5e1;">✕</button>
             </td>
         </tr>`;
@@ -216,10 +216,30 @@ function desenharMetas(gastosAtuais) {
 function renderizarGrafico(dados) {
     const ctx = document.getElementById('graficoFinancas').getContext('2d');
     if (graficoInstancia) graficoInstancia.destroy();
+    
     graficoInstancia = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels: Object.keys(dados), datasets: [{ data: Object.values(dados), backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'] }] },
-        options: { responsive: true, maintainAspectRatio: false }
+        data: {
+            labels: Object.keys(dados),
+            datasets: [{
+                data: Object.values(dados),
+                backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.raw || 0;
+                            return ` R$ ${value.toFixed(2)}`; // Adiciona o R$ no hover
+                        }
+                    }
+                }
+            }
+        }
     });
 }
 
