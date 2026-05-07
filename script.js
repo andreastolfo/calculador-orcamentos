@@ -223,7 +223,16 @@ function renderizarGrafico(dados) {
             labels: Object.keys(dados),
             datasets: [{
                 data: Object.values(dados),
-                backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+                backgroundColor: [
+                    '#2563eb', // Azul (Cartão)
+                    '#10b981', // Verde (Mercado)
+                    '#f59e0b', // Amarelo (Moradia)
+                    '#ef4444', // Vermelho (Lazer)
+                    '#8b5cf6', // Roxo (Transporte)
+                    '#06b6d4', // Ciano (Outros)
+                    '#ec4899', // Rosa (NOVO - ex: Saúde)
+                    '#f97316'  // Laranja (NOVO - ex: Investimentos)
+                ]
             }]
         },
         options: {
