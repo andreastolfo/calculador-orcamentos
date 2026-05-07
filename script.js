@@ -171,13 +171,20 @@ function atualizarInterface() {
             statusHTML = `<span class="badge bg-vista">À Vista</span>`;
         }
 
-        // ORDEM CORRETA DAS COLUNAS: Data | Quem | Status | Item | Valor | Ações
+        // ORDEM CORRETA DAS COLUNAS: Data | Quem | Status | Categoria | Item | Valor | Ações
         tbody.innerHTML += `<tr>
             <td style="font-size:11px; color:#64748b;">${dataBR}</td>
             <td><strong>${r.autor}</strong></td>
             <td>${statusHTML}</td>
+            
+            <td style="font-size:12px; color:#64748b; font-weight:600;">
+                ${r.categoria}
+            </td>
+            
             <td>${r.desc}</td>
-            <td style="color:${r.tipo==='receita'?'#10b981':'#ef4444'}; font-weight:bold;">R$ ${r.valor.toFixed(2)}</td>
+            <td style="color:${r.tipo==='receita'?'#10b981':'#ef4444'}; font-weight:bold;">
+                R$ ${r.valor.toFixed(2)}
+            </td>
             <td>
                 <button onclick="prepararEdicao(${r.id})" style="background:none; border:none; cursor:pointer; margin-right:10px;">✏️</button>
                 <button onclick="excluir(${r.id})" style="background:none; border:none; cursor:pointer; color:#cbd5e1;">✕</button>
