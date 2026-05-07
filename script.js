@@ -22,13 +22,25 @@ function verificarSenha() {
 
 function fazerLogin(nome) {
     usuarioAtual = nome;
+        // Define a expiração para 1 hora (1 * 60 min * 60 seg * 1000 ms)
+    const umaHora = 1 * 60 * 60 * 1000;
+    const dadosSessao = {
+        nome: nome,
+        expiracao: new Date().getTime() + umaHora
+    };
+    
+    localStorage.setItem('sessao_andre_angela', JSON.stringify(dadosSessao));
+
     document.getElementById('nome-usuario').innerText = nome;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-app').style.display = 'block';
     carregarDados();
 }
 
-function logout() { location.reload(); }
+function logout() {
+    localStorage.removeItem('sessao_andre_angela');
+    location.reload(); 
+}
 
 // 3. CARREGAMENTO DE DADOS
 async function carregarDados() {
@@ -197,3 +209,25 @@ async function alternarStatus(id, status) { await supabaseClient.from('transacoe
 async function excluir(id) { if (confirm("Excluir este lançamento?")) { await supabaseClient.from('transacoes').delete().eq('id', id); carregarDados(); } }
 
 supabaseClient.channel('public:transacoes').on('postgres_changes', { event: '*', schema: 'public', table: 'transacoes' }, () => carregarDados()).subscribe();
+
+window.onload = function() {
+    const sessaoSalva = localStorage.getItem('sessao_andre_angela');
+    
+    if (sessaoSalva) {
+        const dados = JSON.parse(sessaoSalva);
+        const agora = new Date().getTime();
+
+        // Verifica se ainda está dentro do prazo de 1 hora
+        if (agora < dados.expiracao) {
+            usuarioAtual = dados.nome;
+            document.getElementById('nome-usuario').innerText = usuarioAtual;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            carregarDados();
+        } else {
+            // Se passou de 1 hora, limpa e obriga novo login
+            localStorage.removeItem('sessao_andre_angela');
+            console.log("Sessão expirada. Faça login novamente.");
+        }
+    }
+};
