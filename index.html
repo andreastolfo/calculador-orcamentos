@@ -14,10 +14,12 @@
         <div class="login-box">
             <h2>💰 Cofre da Família</h2>
             <div id="step-password">
+                <p>Digite a senha de acesso:</p>
                 <input type="password" id="senha-master" placeholder="Senha">
                 <button onclick="verificarSenha()">Entrar</button>
             </div>
             <div id="step-profiles" style="display:none;">
+                <p>Quem está acessando?</p>
                 <button onclick="fazerLogin('André')" class="btn-user">André</button>
                 <button onclick="fazerLogin('Ângela')" class="btn-user">Ângela</button>
             </div>
@@ -41,38 +43,51 @@
 
         <main class="grid-layout">
             <section class="form-container">
-                <h3>Novo Lançamento</h3>
+                <h3 id="titulo-form">Novo Lançamento</h3>
+                <input type="hidden" id="edit-id"> 
+
                 <div class="form-group">
-                    <input type="text" id="desc" placeholder="Descrição">
+                    <label>Descrição</label>
+                    <input type="text" id="desc" placeholder="Ex: Mercado, Salário...">
+                    
+                    <label>Tipo</label>
                     <select id="tipo">
-                        <option value="despesa">Despesa</option>
-                        <option value="receita">Receita</option>
+                        <option value="despesa">Despesa (Gasto)</option>
+                        <option value="receita">Receita (Ganho)</option>
                     </select>
+                    
+                    <label>Categoria</label>
                     <select id="categoria">
+                        <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
                         <option value="Mercado">🛒 Mercado</option>
                         <option value="Moradia">🏠 Moradia</option>
                         <option value="Lazer">🥂 Lazer</option>
-                        <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
                         <option value="Transporte">🚗 Transporte</option>
                         <option value="Saúde">💊 Saúde</option>
                         <option value="Investimentos">💰 Investimentos</option>
                         <option value="Outros">⚙️ Outros</option>
                     </select>
-                    <input type="number" id="valor" step="0.01" placeholder="R$ 0,00">
+                    
+                    <label>Valor (R$)</label>
+                    <input type="number" id="valor" step="0.01" placeholder="0.00">
+                    
                     <button onclick="adicionarRegistro()" class="btn-primary">Lançar</button>
                 </div>
 
-                <hr style="margin:25px 0; border:0; border-top:1px solid #eee;">
+                <hr class="separator">
                 
                 <h3>Definir Meta</h3>
                 <div class="form-group">
+                    <label>Categoria da Meta</label>
                     <select id="meta-categoria">
-                        <option value="Mercado">Mercado</option>
-                        <option value="Lazer">Lazer</option>
                         <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Mercado">Mercado</option>
+                        <option value="Moradia">Moradia</option>
+                        <option value="Lazer">Lazer</option>
                         <option value="Transporte">Transporte</option>
                     </select>
-                    <input type="number" id="meta-valor" placeholder="Limite R$">
+                    <label>Limite Mensal (R$)</label>
+                    <input type="number" id="meta-valor" placeholder="Ex: 500.00">
                     <button onclick="definirMeta()" class="btn-primary" style="background:#1e293b;">Salvar Meta</button>
                 </div>
             </section>
@@ -80,13 +95,13 @@
             <div class="visual-area">
                 <div class="filters-container">
                     <select id="filtroAutor" onchange="atualizarInterface()">
-                        <option value="Todos">Todos</option>
+                        <option value="Todos">Todos os Autores</option>
                         <option value="André">André</option>
                         <option value="Ângela">Ângela</option>
                     </select>
                     <select id="filtroMes" onchange="atualizarInterface()">
                         <option value="Atual">Mês Atual</option>
-                        <option value="Todos">Histórico</option>
+                        <option value="Todos">Todo o Histórico</option>
                     </select>
                 </div>
 
@@ -96,7 +111,15 @@
 
                 <div class="table-box">
                     <table>
-                        <thead><tr><th>Quem</th><th>Status</th><th>Item</th><th>Valor</th><th></th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Quem</th>
+                                <th>Status</th>
+                                <th>Item</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
                         <tbody id="lista-transacoes"></tbody>
                     </table>
                 </div>
