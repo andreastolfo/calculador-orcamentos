@@ -1,163 +1,142 @@
 :root {
-    /* Cores Modernas */
+    /* Cores do Dashboard Moderno */
     --bg-body: #f8fafc;
     --bg-card: #ffffff;
-    --primary: #4f46e5; /* Indigo Moderno */
-    --primary-hover: #4338ca;
+    --primary: #2563eb; 
+    --primary-hover: #1d4ed8;
     --text-main: #0f172a;
     --text-muted: #64748b;
     --border: #e2e8f0;
     
-    /* Status com Cores Vibrantes porém Elegantes */
-    --success: #10b981; /* Esmeralda */
-    --danger: #ef4444;  /* Rose */
-    --warning: #f59e0b; /* Ambar */
-    --info: #3b82f6;    /* Azul */
-    --vista: #64748b;   /* Slate */
+    /* Status Badges */
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --vista: #64748b;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     --radius: 12px;
 }
 
-* { box-sizing: border-box; transition: all 0.2s ease-in-out; }
+* { box-sizing: border-box; }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     background-color: var(--bg-body);
     color: var(--text-main);
     margin: 0;
     padding: 24px;
 }
 
-/* --- LOGIN E ACESSO --- */
+/* ==========================================
+   TELA DE ACESSO (O ESTILO QUE VOCÊ GOSTA)
+   ========================================== */
 .modal {
-    background: #0f172a; /* Dark Navy */
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #1e293b; /* Fundo escuro clássico */
     display: flex; align-items: center; justify-content: center; z-index: 2000;
 }
 
 .login-box {
-    background: var(--bg-card);
-    padding: 48px;
-    border-radius: 24px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+    max-width: 380px;
     text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
-/* --- HEADER --- */
+.login-box h2 { margin-bottom: 25px; color: #1e293b; font-size: 22px; }
+
+#senha-master {
+    width: 100%;
+    padding: 15px;
+    margin: 20px 0;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 22px;
+    outline: none;
+}
+
+/* Botão Entrar e Botões de Perfil (André/Ângela) */
+.login-box button, .btn-user {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-top: 12px;
+    background-color: #f8fafc;
+    color: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* O efeito azul que você pediu */
+.login-box button:hover, .btn-user:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Cor específica para o botão "Entrar" inicial ser azul desde sempre */
+#step-password button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+}
+
+/* ==========================================
+   DASHBOARD E LAYOUT (VISUAL PRO)
+   ========================================== */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
 }
 
-h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-
-/* --- CARDS DE RESUMO --- */
 .summary-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    margin-bottom: 40px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px; margin-bottom: 40px;
 }
 
 .card {
-    background: var(--bg-card);
-    padding: 24px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
+    background: var(--bg-card); padding: 24px; border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); border-left: 5px solid transparent;
 }
+.income { border-left-color: var(--success); }
+.expenses { border-left-color: var(--danger); }
+.balance { border-left-color: var(--primary); }
 
-.card::before {
-    content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-}
-.income::before { background: var(--success); }
-.expenses::before { background: var(--danger); }
-.balance::before { background: var(--primary); }
-
-.card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
-.card p { font-size: 32px; font-weight: 700; margin: 0; color: var(--text-main); }
-
-/* --- LAYOUT --- */
-.grid-layout {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 32px;
-}
-
-@media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+.grid-layout { display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
+@media (max-width: 1000px) { .grid-layout { grid-template-columns: 1fr; } }
 
 .form-container, .metas-box, .chart-box, .table-box {
-    background: var(--bg-card);
-    padding: 32px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
+    background: var(--bg-card); padding: 25px; border-radius: var(--radius);
+    border: 1px solid var(--border); margin-bottom: 25px;
 }
-
-/* --- FORMULÁRIOS --- */
-label { font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px; }
 
 input, select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 20px;
-    outline: none;
-    background: #fcfcfd;
+    width: 100%; padding: 12px; margin-bottom: 15px;
+    border: 1px solid var(--border); border-radius: 8px; font-size: 14px;
 }
 
-input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
-
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-}
-
-.btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-
-/* --- TABELA --- */
-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-th { padding: 16px; text-align: left; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-td { padding: 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: middle; }
-
-tr:hover td { background-color: #f8fafc; }
-
-/* --- BADGES (STATUS) --- */
+/* Badges de Status na Tabela */
 .badge {
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: white;
-    display: inline-block;
-    min-width: 90px;
-    text-align: center;
+    padding: 5px 10px; border-radius: 6px; font-size: 11px;
+    font-weight: bold; text-transform: uppercase; color: white;
+    display: inline-block; min-width: 85px; text-align: center;
 }
-
 .bg-pago { background: var(--success); }
 .bg-pendente { background: var(--warning); }
 .bg-vista { background: var(--vista); }
 
-/* --- BOTÕES DE AÇÃO --- */
-.btn-icon {
-    background: none; border: none; cursor: pointer; padding: 6px;
-    border-radius: 6px; color: var(--text-muted);
-}
-.btn-icon:hover { background: #f1f5f9; color: var(--primary); }
+/* Tabela */
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 15px; font-size: 12px; color: var(--text-muted); border-bottom: 2px solid #f1f5f9; }
+td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
