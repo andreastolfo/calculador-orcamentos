@@ -20,23 +20,85 @@ body {
 
 /* LOGIN MODAL */
 .modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1e293b; /* Fundo escuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
+
+/* Formatação da Caixa de Login */
 .login-box {
-    background: var(--white); padding: 40px; border-radius: 20px;
-    text-align: center; width: 100%; max-width: 400px; box-shadow: var(--shadow);
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 380px; /* Largura controlada */
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza o conteúdo interno horizontalmente */
 }
+
+.login-box h2 {
+    margin-bottom: 25px;
+    color: #1e293b;
+    font-size: 22px;
+}
+
+/* Estilo do Campo de Senha */
 #senha-master {
-    width: 100%; padding: 15px; margin: 20px 0; border: 2px solid var(--border);
-    border-radius: 12px; text-align: center; font-size: 22px; outline: none;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 18px;
+    outline: none;
+    box-sizing: border-box; /* Garante que o padding não "estoure" a largura */
 }
+
+#senha-master:focus {
+    border-color: #2563eb;
+}
+
+/* Estilo do Botão de Entrar (Premium) */
+.login-box button {
+    width: 100%;
+    padding: 15px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-box button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Botões de Perfil (André e Ângela) */
 .btn-user {
-    display: block; width: 100%; padding: 14px; margin-top: 12px; 
-    border-radius: 10px; border: 1px solid var(--border); cursor: pointer; 
-    font-weight: 600; background: #f8fafc; transition: 0.3s;
+    margin-top: 10px !important;
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    border: 1px solid #e2e8f0 !important;
 }
-.btn-user:hover { background: var(--primary); color: white; }
+
+.btn-user:hover {
+    background-color: #2563eb !important;
+    color: white !important;
+}
 
 /* HEADER */
 header {
