@@ -18,11 +18,36 @@
 }
 
 body {
-    background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+    background: radial-gradient(circle at top left, #e2e8f0, #f8fafc 50%),
+                radial-gradient(circle at bottom right, #cbd5e1, #f1f5f9);
     background-attachment: fixed;
+    min-height: 100vh;
     margin: 0;
     padding: 30px;
-    color: var(--text-dark);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.form-container, .metas-box, .chart-box, .table-box, .card {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05) !important;
+    position: relative;
+    z-index: 2;
+}
+
+td {
+    background: rgba(255, 255, 255, 0.4) !important;
 }
 
 /* ==========================================
